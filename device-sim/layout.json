@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Charging_Dock",
+        "x": 0.0,
+        "y": 0.0
+    },
+    {
+        "name": "Assembly_Line_A",
+        "x": 80.0,
+        "y": 20.0
+    },
+    {
+        "name": "Assembly_Line_B",
+        "x": 80.0,
+        "y": 60.0
+    },
+    {
+        "name": "Warehouse_Pick",
+        "x": 10.0,
+        "y": 90.0
+    },
+    {
+        "name": "Quality_Control",
+        "x": 40.0,
+        "y": 50.0
+    }
+]

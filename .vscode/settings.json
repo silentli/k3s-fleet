@@ -1,0 +1,9 @@
+{
+    "python.defaultInterpreterPath": "/Users/guolee/Desktop/github/k3s-fleet/.venv/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "python.analysis.extraPaths": [
+        "/Users/guolee/Desktop/github/k3s-fleet/device-sim"
+    ],
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic"
+}
