@@ -41,10 +41,6 @@ class FactoryRobot:
     def __init__(self, device_id: str):
         self.device_id = device_id
         
-        # Ensure stations
-        if not settings.stations:
-            raise ValueError("No stations loaded. Check your layout.json file.")
-
         # Initial State
         self.x: float = random.uniform(0, settings.factory_max_x)
         self.y: float = random.uniform(0, settings.factory_max_y)
