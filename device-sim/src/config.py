@@ -8,7 +8,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 logger = logging.getLogger("device-sim.config")
 
 # Define the base directory using modern pathlib
-BASE_DIR = Path(__file__).parent.resolve()
+BASE_DIR = Path(__file__).parent.parent.resolve()
+SRC_DIR = Path(__file__).parent.resolve()
 
 class StationConfig(BaseModel):
     name: str
@@ -48,7 +49,7 @@ class Settings(BaseSettings):
         
         # If it's just a filename (not absolute), anchor it to the script's directory
         if not layout_path.is_absolute():
-            layout_path = BASE_DIR / layout_path
+            layout_path = SRC_DIR / layout_path
 
         if layout_path.exists():
             try:
