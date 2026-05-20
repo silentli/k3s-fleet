@@ -56,6 +56,9 @@ class Settings(BaseSettings):
                 raw_stations = json.loads(layout_path.read_text())
                 self.stations = [StationConfig(**s) for s in raw_stations]
             except Exception as e:
-                logger.error(f"Failed to parse layout file {layout_path}: {e}")
+                raise ValueError(f"Failed to parse layout file {layout_path}: {e}") from e
         else:
-            logger.error(f"Layout file {layout_path} not found! Defaulting to empty layout.")
+            raise ValueError(f"Layout file {layout_path} not found!")
+            
+        if not self.stations:
+            raise ValueError(f"Layout file {layout_path} must contain at least one station.")
