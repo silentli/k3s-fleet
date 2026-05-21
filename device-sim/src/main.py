@@ -137,7 +137,7 @@ def main():
     # Generate unique identity
     hostname = socket.gethostname()
     uuid_str = str(uuid.uuid4())[:6]
-    device_id = f"robot-agv-{hostname}-{uuid_str}"
+    device_id = f"robot-{hostname}-{uuid_str}"
 
     logger.info(f"Starting Device Simulator: {device_id}")
     
