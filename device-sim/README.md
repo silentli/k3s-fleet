@@ -7,6 +7,7 @@ An IoT Device Simulator that mimics an robot moving around a factory floor. The 
 ## Tech Stack
 
 - **[uv](https://github.com/astral-sh/uv)**: Dependency management (`uv.lock`) and virtual environment creation. It replaces `pip` and `venv`.
+- **[Ruff](https://docs.astral.sh/ruff/)**: An extremely fast Python linter and code formatter written in Rust.
 - **[Pydantic V2 & Pydantic Settings](https://docs.pydantic.dev/)**: Used for configuration and validation. It guarantees that environment variables and `layout.json` data are valid before the application logic starts.
 - **[Paho MQTT](https://pypi.org/project/paho-mqtt/)**: An MQTT client used to stream JSON telemetry payloads to the message broker.
 - **[Pytest](https://docs.pytest.org/)**: A testing framework.
@@ -49,6 +50,15 @@ uv run python src/main.py
 ### 5. Running Tests
 ```bash
 uv run pytest tests
+```
+
+### 6. Linting & Formatting
+```bash
+# Check for linting errors
+uv run ruff check .
+
+# Format the code
+uv run ruff format .
 ```
 
 ---
