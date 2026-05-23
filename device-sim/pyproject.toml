@@ -23,7 +23,7 @@ dev = [
 pythonpath = ["src"]
 
 [tool.ruff]
-line-length = 100
+line-length = 150
 target-version = "py311"
 
 [tool.ruff.lint]
@@ -39,4 +39,4 @@ ignore = [
 ]
 
 [tool.ruff.format]
-quote-style = "double"
+quote-style = "preserve"

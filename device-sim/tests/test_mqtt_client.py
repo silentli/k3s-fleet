@@ -10,12 +10,13 @@ def test_mqtt_client_initialization():
         host="localhost",
         port=1883,
         topic="test/topic",
-        max_buffer_size=10
+        max_buffer_size=10,
     )
     assert client.client_id == "test-client"
     assert client.topic == "test/topic"
     assert client.is_connected is False
     assert client.message_buffer.maxlen == 10
+
 
 @patch("mqtt_client.mqtt.Client")
 def test_mqtt_client_publish_when_offline(mock_mqtt_class):
@@ -28,6 +29,7 @@ def test_mqtt_client_publish_when_offline(mock_mqtt_class):
     # Should buffer the message instead of publishing
     assert len(client.message_buffer) == 1
     assert client.message_buffer[0] == '{"data": 123}'
+
 
 @patch("mqtt_client.mqtt.Client")
 def test_mqtt_client_publish_when_online(mock_mqtt_class):

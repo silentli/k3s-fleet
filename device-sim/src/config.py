@@ -11,10 +11,12 @@ logger = logging.getLogger("device-sim.config")
 BASE_DIR = Path(__file__).parent.parent.resolve()
 SRC_DIR = Path(__file__).parent.resolve()
 
+
 class StationConfig(BaseModel):
     name: str
     x: float
     y: float
+
 
 class Settings(BaseSettings):
     # MQTT Config
@@ -40,7 +42,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env",
         env_file_encoding="utf-8",
-        extra="ignore"
+        extra="ignore",
     )
 
     def model_post_init(self, __context):

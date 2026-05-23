@@ -18,7 +18,7 @@ log_level = os.getenv("LOG_LEVEL", "INFO").upper()
 
 logging.basicConfig(
     level=getattr(logging, log_level, logging.INFO),
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
 )
 logger = logging.getLogger("device-sim")
 
@@ -26,6 +26,7 @@ logger = logging.getLogger("device-sim")
 # Configuration Instance
 # ---------------------------------------------------------
 settings = Settings()
+
 
 # ---------------------------------------------------------
 # Robot Logic
@@ -48,9 +49,7 @@ class FactoryRobot:
 
     def _pick_new_station(self, exclude_name: str | None = None):
         """Picks a random target station, preventing the robot from picking its current location or the charging dock."""
-        available = [
-            s for s in settings.stations
-            if s.name != exclude_name and s.name != "Charging_Dock"]
+        available = [s for s in settings.stations if s.name != exclude_name and s.name != "Charging_Dock"]
         return random.choice(available)
 
     def _handle_charging(self):
@@ -109,19 +108,20 @@ class FactoryRobot:
             location=Location(
                 x=round(self.x, 2),
                 y=round(self.y, 2),
-                heading_deg=round(self.heading_deg, 2)
+                heading_deg=round(self.heading_deg, 2),
             ),
             status=self.status,
             metrics=Metrics(
                 battery_soc_pct=round(self.battery_soc, 1),
                 payload_weight_kg=round(self.payload_weight, 1),
-                wifi_rssi_dbm=random.randint(-85, -40)
+                wifi_rssi_dbm=random.randint(-85, -40),
             ),
             diagnostics=Diagnostics(
                 error_code=0,
-                obstacle_detected=obstacle_detected
-            )
+                obstacle_detected=obstacle_detected,
+            ),
         )
+
 
 # ---------------------------------------------------------
 # Main Execution Loop
@@ -139,7 +139,7 @@ def main():
         client_id=device_id,
         host=settings.mqtt_broker_host,
         port=settings.mqtt_broker_port,
-        topic=settings.mqtt_topic
+        topic=settings.mqtt_topic,
     )
     mqtt_client.connect()
 
@@ -158,8 +158,9 @@ def main():
 
     except KeyboardInterrupt:
         logger.info("Simulation stopped by user.")
-        if hasattr(mqtt_client, 'disconnect'):
+        if hasattr(mqtt_client, "disconnect"):
             mqtt_client.disconnect()
+
 
 if __name__ == "__main__":
     main()

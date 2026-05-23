@@ -5,6 +5,7 @@ import paho.mqtt.client as mqtt
 
 logger = logging.getLogger("device-sim.mqtt")
 
+
 class ResilientMQTTClient:
     def __init__(self, client_id: str, host: str, port: int, topic: str, max_buffer_size: int = 500):
         self.client_id = client_id

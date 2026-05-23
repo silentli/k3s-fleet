@@ -7,6 +7,7 @@ def test_factory_robot_init(mock_settings):
     assert robot.device_id == "test-robot"
     assert robot.target_station.name in ["Station_A", "Station_B", "Charging_Dock"]
 
+
 def test_factory_robot_low_battery_override(mock_settings):
     robot = FactoryRobot("test-robot")
     # Set battery low
@@ -16,6 +17,7 @@ def test_factory_robot_low_battery_override(mock_settings):
     robot.tick()
     # It should override and head to Charging_Dock
     assert robot.target_station.name == "Charging_Dock"
+
 
 def test_factory_robot_charging(mock_settings):
     robot = FactoryRobot("test-robot")
@@ -28,6 +30,7 @@ def test_factory_robot_charging(mock_settings):
     robot.tick()
     assert robot.status == RobotStatus.CHARGING
     assert robot.battery_soc == 98.0  # 90.0 + 8.0
+
 
 def test_factory_robot_finish_charging(mock_settings):
     robot = FactoryRobot("test-robot")

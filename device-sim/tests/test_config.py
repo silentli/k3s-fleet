@@ -12,10 +12,12 @@ def test_station_config():
     assert station.x == 1.5
     assert station.y == 2.5
 
+
 def test_settings_missing_layout_file():
     """Test that Settings initialization fails if the layout file is missing."""
     with pytest.raises((ValueError, ValidationError), match="not found"):
         Settings(factory_layout_file="does_not_exist.json")
+
 
 def test_settings_empty_layout(tmp_path):
     """Test that Settings initialization fails if the layout file contains no stations."""
@@ -25,6 +27,7 @@ def test_settings_empty_layout(tmp_path):
     with pytest.raises((ValueError, ValidationError), match="must contain at least one station"):
         Settings(factory_layout_file=str(empty_layout))
 
+
 def test_settings_malformed_layout(tmp_path):
     """Test that Settings initialization fails if the layout file is invalid JSON."""
     bad_layout = tmp_path / "bad.json"
@@ -32,6 +35,7 @@ def test_settings_malformed_layout(tmp_path):
 
     with pytest.raises((ValueError, ValidationError), match="Failed to parse layout file"):
         Settings(factory_layout_file=str(bad_layout))
+
 
 def test_settings_valid_layout(tmp_path):
     """Test that Settings initializes correctly with a valid layout file."""
