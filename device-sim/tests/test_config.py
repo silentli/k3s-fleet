@@ -1,4 +1,6 @@
 import pytest
+import json
+from pydantic import ValidationError
 from config import StationConfig, Settings
 
 def test_station_config():
@@ -6,9 +8,6 @@ def test_station_config():
     assert station.name == "Test"
     assert station.x == 1.5
     assert station.y == 2.5
-
-import json
-from pydantic import ValidationError
 
 def test_settings_missing_layout_file():
     """Test that Settings initialization fails if the layout file is missing."""

@@ -1,5 +1,24 @@
 import pytest
+from unittest.mock import patch
 from models import Location, Metrics, Diagnostics, TelemetryPayload, RobotStatus
+from config import StationConfig
+
+@pytest.fixture
+def mock_settings():
+    with patch("main.settings") as mock:
+        mock.stations = [
+            StationConfig(name="Station_A", x=0.0, y=0.0),
+            StationConfig(name="Station_B", x=10.0, y=0.0),
+            StationConfig(name="Charging_Dock", x=5.0, y=5.0)
+        ]
+        mock.factory_max_x = 100.0
+        mock.factory_max_y = 100.0
+        mock.robot_speed_mps = 1.5
+        mock.battery_drain_moving = 0.2
+        mock.battery_drain_idle = 0.1
+        mock.battery_charge_rate = 8.0
+        mock.battery_low_threshold = 20.0
+        yield mock
 
 @pytest.fixture
 def base_payload():
