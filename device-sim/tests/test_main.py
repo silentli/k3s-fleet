@@ -1,6 +1,6 @@
-import pytest
-from models import RobotStatus
 from main import FactoryRobot
+from models import RobotStatus
+
 
 def test_factory_robot_init(mock_settings):
     robot = FactoryRobot("test-robot")
@@ -19,23 +19,23 @@ def test_factory_robot_low_battery_override(mock_settings):
 
 def test_factory_robot_charging(mock_settings):
     robot = FactoryRobot("test-robot")
-    
+
     # Snap to charging dock
     robot.target_station = mock_settings.stations[2]
     robot.x, robot.y = robot.target_station.x, robot.target_station.y
     robot.battery_soc = 90.0
-    
+
     robot.tick()
     assert robot.status == RobotStatus.CHARGING
     assert robot.battery_soc == 98.0  # 90.0 + 8.0
 
 def test_factory_robot_finish_charging(mock_settings):
     robot = FactoryRobot("test-robot")
-    
+
     robot.target_station = mock_settings.stations[2]
     robot.x, robot.y = robot.target_station.x, robot.target_station.y
     robot.battery_soc = 95.0
-    
+
     robot.tick()
     # 95.0 + 8.0 = 103.0, but capped at 100.0
     assert robot.battery_soc == 100.0

@@ -1,6 +1,7 @@
 import logging
-import paho.mqtt.client as mqtt
 from collections import deque
+
+import paho.mqtt.client as mqtt
 
 logger = logging.getLogger("device-sim.mqtt")
 
@@ -12,12 +13,12 @@ class ResilientMQTTClient:
         self.topic = topic
         self.is_connected = False
         self.message_buffer = deque(maxlen=max_buffer_size)
-        
+
         # Initialize Paho MQTT client (compatible with v1.6.1)
         self.client = mqtt.Client(client_id=self.client_id)
         self.client.on_connect = self._on_connect
         self.client.on_disconnect = self._on_disconnect
-        
+
     def _on_connect(self, client, userdata, flags, rc):
         if rc == 0:
             logger.info("Connected to MQTT Broker!")

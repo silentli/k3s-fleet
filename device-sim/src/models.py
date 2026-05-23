@@ -1,7 +1,9 @@
-from enum import Enum
+from enum import StrEnum
+
 from pydantic import BaseModel
 
-class RobotStatus(str, Enum):
+
+class RobotStatus(StrEnum):
     IDLE = "idle"
     MOVING = "moving"
     CHARGING = "charging"

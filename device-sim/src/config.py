@@ -1,7 +1,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import List
+
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -21,15 +21,15 @@ class Settings(BaseSettings):
     mqtt_broker_host: str = "localhost"
     mqtt_broker_port: int = 1883
     mqtt_topic: str = "factory/telemetry"
-    
+
     # Factory Layout File Path
     factory_layout_file: str = "layout.json"
-    stations: List[StationConfig] = []
-    
+    stations: list[StationConfig] = []
+
     # Factory Floor Dimensions
     factory_max_x: float = 100.0
     factory_max_y: float = 100.0
-    
+
     # Robot Physical Parameters
     robot_speed_mps: float = 1.5
     battery_charge_rate: float = 8.0
@@ -38,15 +38,15 @@ class Settings(BaseSettings):
     battery_low_threshold: float = 20.0
 
     model_config = SettingsConfigDict(
-        env_file=BASE_DIR / ".env", 
-        env_file_encoding="utf-8", 
+        env_file=BASE_DIR / ".env",
+        env_file_encoding="utf-8",
         extra="ignore"
     )
 
     def model_post_init(self, __context):
         """Pydantic V2 hook: Automatically loads the layout.json after reading .env"""
         layout_path = Path(self.factory_layout_file)
-        
+
         # If it's just a filename (not absolute), anchor it to the script's directory
         if not layout_path.is_absolute():
             layout_path = SRC_DIR / layout_path
@@ -59,6 +59,6 @@ class Settings(BaseSettings):
                 raise ValueError(f"Failed to parse layout file {layout_path}: {e}") from e
         else:
             raise ValueError(f"Layout file {layout_path} not found!")
-            
+
         if not self.stations:
             raise ValueError(f"Layout file {layout_path} must contain at least one station.")

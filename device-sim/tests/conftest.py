@@ -1,7 +1,10 @@
-import pytest
 from unittest.mock import patch
-from models import Location, Metrics, Diagnostics, TelemetryPayload, RobotStatus
+
+import pytest
+
 from config import StationConfig
+from models import Diagnostics, Location, Metrics, RobotStatus, TelemetryPayload
+
 
 @pytest.fixture
 def mock_settings():
