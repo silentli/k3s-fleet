@@ -72,7 +72,5 @@ To build and run the simulator using Docker:
 docker build -t device-sim .
 
 # Run the container
-docker run -it --rm --network host device-sim
+docker run -it --rm --env-file .env device-sim
 ```
-
-*(Note: The Dockerfile uses `uv`'s cache mounting to speed up rebuilds).*
