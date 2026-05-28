@@ -111,6 +111,7 @@ class FactoryRobot:
                 heading_deg=round(self.heading_deg, 2),
             ),
             status=self.status,
+            destination=self.target_station.name,
             metrics=Metrics(
                 battery_soc_pct=round(self.battery_soc, 1),
                 payload_weight_kg=round(self.payload_weight, 1),

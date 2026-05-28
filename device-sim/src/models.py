@@ -32,5 +32,6 @@ class TelemetryPayload(BaseModel):
     timestamp: int
     location: Location
     status: RobotStatus
+    destination: str
     metrics: Metrics
     diagnostics: Diagnostics
