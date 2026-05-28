@@ -31,6 +31,7 @@ def base_payload():
         timestamp=1620000000,
         location=Location(x=10.5, y=20.2, heading_deg=90.0),
         status=RobotStatus.IDLE,
+        destination="Station_A",
         metrics=Metrics(battery_soc_pct=100.0, payload_weight_kg=0.0, wifi_rssi_dbm=-50),
         diagnostics=Diagnostics(error_code=0, obstacle_detected=False),
     )
