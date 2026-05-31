@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telemetry-writer
+  labels:
+    app: telemetry-writer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telemetry-writer
+  template:
+    metadata:
+      labels:
+        app: telemetry-writer
+    spec:
+      containers:
+        - name: telemetry-writer
+          image: telemetry-writer:v1.0.0
+          # In local k3d development
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+          env:
+            - name: MQTT_BROKER_HOST
+              value: "mosquitto"
+            - name: MQTT_BROKER_PORT
+              value: "1883"
+            - name: MQTT_TOPIC
+              value: "factory/telemetry"
+            - name: MQTT_CLIENT_ID
+              value: "telemetry-writer-k8s"
+            - name: DB_HOST
+              value: "postgres"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_DB
+            - name: DB_SSLMODE
+              value: "disable"
