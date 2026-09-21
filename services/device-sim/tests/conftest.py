@@ -2,13 +2,13 @@ from unittest.mock import patch
 
 import pytest
 
-from config import StationConfig
-from models import Diagnostics, Location, Metrics, RobotStatus, TelemetryPayload
+from device_sim.config import StationConfig
+from device_sim.telemetry import Diagnostics, Location, Metrics, RobotStatus, TelemetryPayload
 
 
 @pytest.fixture
 def mock_settings():
-    with patch("main.settings") as mock:
+    with patch("device_sim.main.settings") as mock:
         mock.stations = [
             StationConfig(name="Station_A", x=0.0, y=0.0),
             StationConfig(name="Station_B", x=10.0, y=0.0),

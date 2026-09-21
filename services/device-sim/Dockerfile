@@ -18,6 +18,7 @@ COPY . .
 
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH="/app/src"
 
 # Run the application directly from the virtual environment
-CMD ["python", "-u", "src/main.py"]
+CMD ["python", "-u", "-m", "device_sim.main"]

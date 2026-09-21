@@ -6,9 +6,9 @@ import socket
 import time
 import uuid
 
-from config import Settings
-from models import Diagnostics, Location, Metrics, RobotStatus, TelemetryPayload
-from mqtt_client import ResilientMQTTClient
+from .config import Settings
+from .mqtt_client import ResilientMQTTClient
+from .telemetry import Diagnostics, Location, Metrics, RobotStatus, TelemetryPayload
 
 # ---------------------------------------------------------
 # Logging Setup

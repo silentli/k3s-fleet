@@ -1,4 +1,4 @@
-from models import RobotStatus
+from device_sim.telemetry import RobotStatus
 
 
 def test_telemetry_payload_creation(base_payload):

@@ -1,5 +1,5 @@
-from main import FactoryRobot
-from models import RobotStatus
+from device_sim.main import FactoryRobot
+from device_sim.telemetry import RobotStatus
 
 
 def test_factory_robot_init(mock_settings):

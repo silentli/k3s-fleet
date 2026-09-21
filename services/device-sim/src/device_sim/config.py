@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 logger = logging.getLogger("device-sim.config")
 
 # Define the base directory using modern pathlib
-BASE_DIR = Path(__file__).parent.parent.resolve()
+BASE_DIR = Path(__file__).parents[2].resolve()
 SRC_DIR = Path(__file__).parent.resolve()
 
 

@@ -21,9 +21,11 @@ An IoT Device Simulator that mimics an robot moving around a factory floor. The 
 Ensure [uv](https://github.com/astral-sh/uv) is installed.
 
 ### 2. Local Setup
-Clone the repository and install the dependencies using `uv`:
+From the simulator service directory, install the dependencies using `uv`:
 
 ```bash
+cd services/device-sim
+
 # Sync dependencies and create a virtual environment (.venv)
 uv sync
 
@@ -32,8 +34,17 @@ source .venv/bin/activate
 ```
 
 ### 3. Configuration
-The simulator requires a `layout.json` file in the `src/` directory to define the factory stations (e.g., Charging Docks, Assembly Lines).
-A `.env` file can also be created in the root directory to override default MQTT configurations:
+The simulator requires `src/device_sim/layout.json` to define factory stations
+(for example, Charging Docks and Assembly Lines).
+
+For local Docker runs, create a `.env` file in this `services/device-sim`
+directory from the supplied example:
+
+```bash
+cp .env.example .env
+```
+
+Use it to override the default MQTT configuration:
 
 ```ini
 MQTT_BROKER_HOST=localhost
@@ -44,7 +55,7 @@ MQTT_BROKER_PORT=1883
 The simulator can be run directly via `uv`:
 
 ```bash
-uv run python src/main.py
+PYTHONPATH=src uv run python -m device_sim.main
 ```
 
 ### 5. Running Tests
@@ -65,12 +76,12 @@ uv run ruff format .
 
 ## Docker
 
-To build and run the simulator using Docker:
+From `services/device-sim`, build and run the simulator using Docker:
 
 ```bash
 # Build the image
 docker build -t device-sim .
 
-# Run the container
+# Run the container with the .env file created above
 docker run -it --rm --env-file .env device-sim
 ```

@@ -1,0 +1,1 @@
+"""Factory robot simulator service."""

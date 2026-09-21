@@ -3,7 +3,7 @@ import json
 import pytest
 from pydantic import ValidationError
 
-from config import Settings, StationConfig
+from device_sim.config import Settings, StationConfig
 
 
 def test_station_config():

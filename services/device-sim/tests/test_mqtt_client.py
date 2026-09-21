@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from mqtt_client import ResilientMQTTClient
+from device_sim.mqtt_client import ResilientMQTTClient
 
 
 def test_mqtt_client_initialization():
@@ -18,7 +18,7 @@ def test_mqtt_client_initialization():
     assert client.message_buffer.maxlen == 10
 
 
-@patch("mqtt_client.mqtt.Client")
+@patch("device_sim.mqtt_client.mqtt.Client")
 def test_mqtt_client_publish_when_offline(mock_mqtt_class):
     """Test that publish buffers messages when the client is offline."""
     client = ResilientMQTTClient("test-client", "localhost", 1883, "test/topic")
@@ -31,7 +31,7 @@ def test_mqtt_client_publish_when_offline(mock_mqtt_class):
     assert client.message_buffer[0] == '{"data": 123}'
 
 
-@patch("mqtt_client.mqtt.Client")
+@patch("device_sim.mqtt_client.mqtt.Client")
 def test_mqtt_client_publish_when_online(mock_mqtt_class):
     """Test that publish sends messages immediately when the client is online."""
     mock_instance = mock_mqtt_class.return_value
