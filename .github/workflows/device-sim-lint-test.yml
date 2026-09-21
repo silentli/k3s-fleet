@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: device-sim
+        working-directory: services/device-sim
 
     steps:
       - name: Check out repository
@@ -21,12 +21,12 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
-          cache-dependency-glob: "device-sim/uv.lock"
+          cache-dependency-glob: "services/device-sim/uv.lock"
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version-file: "device-sim/pyproject.toml"
+          python-version-file: "services/device-sim/pyproject.toml"
 
       - name: Install dependencies
         run: uv sync --dev
