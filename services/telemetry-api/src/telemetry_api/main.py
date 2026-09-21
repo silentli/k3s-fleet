@@ -1,18 +1,22 @@
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 
 from .config import Settings
 from .database import Base, create_session_factory
-from .db_models import TelemetryRecord
+from .db_models import TelemetryRecord, latest_robot_records
 from .mqtt_consumer import TelemetryConsumer
 from .telemetry import RobotLatest, RobotStatus
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 settings = Settings()
 engine, SessionLocal = create_session_factory(settings.database_url)
+STATIC_DIR = Path(__file__).parent / "static"
 
 
 @asynccontextmanager
@@ -27,6 +31,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Fleet Telemetry API", lifespan=lifespan)
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 def as_latest(record: TelemetryRecord) -> RobotLatest:
@@ -37,8 +42,14 @@ def as_latest(record: TelemetryRecord) -> RobotLatest:
         destination=record.destination,
         x=record.x,
         y=record.y,
+        heading_deg=record.heading_deg,
         battery_soc_pct=record.battery_soc_pct,
     )
+
+
+@app.get("/", include_in_schema=False)
+def dashboard():
+    return FileResponse(STATIC_DIR / "dashboard.html")
 
 
 @app.get("/health")
@@ -51,12 +62,8 @@ def health():
 @app.get("/robots", response_model=list[RobotLatest])
 def list_robots():
     with SessionLocal() as session:
-        records = session.query(TelemetryRecord).order_by(TelemetryRecord.device_timestamp.desc()).all()
-
-    latest_by_device = {}
-    for record in records:
-        latest_by_device.setdefault(record.device_id, as_latest(record))
-    return list(latest_by_device.values())
+        records = latest_robot_records(session)
+    return [as_latest(record) for record in records]
 
 
 @app.get("/robots/{device_id}/latest", response_model=RobotLatest)

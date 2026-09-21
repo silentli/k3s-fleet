@@ -44,4 +44,5 @@ class RobotLatest(BaseModel):
     destination: str
     x: float
     y: float
+    heading_deg: float
     battery_soc_pct: float

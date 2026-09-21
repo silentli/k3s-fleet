@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import JSON, Boolean, DateTime, Float, Integer, String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import JSON, Boolean, DateTime, Float, Integer, String, func, select
+from sqlalchemy.orm import Mapped, Session, mapped_column
 
 from .database import Base
 from .telemetry import TelemetryPayload
@@ -43,3 +43,27 @@ class TelemetryRecord(Base):
             obstacle_detected=payload.diagnostics.obstacle_detected,
             raw_payload=payload.model_dump(mode="json"),
         )
+
+
+def latest_robot_records(session: Session) -> list[TelemetryRecord]:
+    """Return one newest telemetry record per robot without loading full history."""
+    ranked_records = (
+        select(
+            TelemetryRecord.id,
+            func.row_number()
+            .over(
+                partition_by=TelemetryRecord.device_id,
+                order_by=(TelemetryRecord.device_timestamp.desc(), TelemetryRecord.id.desc()),
+            )
+            .label("position"),
+        )
+        .subquery()
+    )
+
+    statement = (
+        select(TelemetryRecord)
+        .join(ranked_records, TelemetryRecord.id == ranked_records.c.id)
+        .where(ranked_records.c.position == 1)
+        .order_by(TelemetryRecord.device_id)
+    )
+    return list(session.scalars(statement))
