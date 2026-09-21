@@ -1,0 +1,52 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: #172033;
+  background: #f6f8fb;
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; }
+
+.page { max-width: 1120px; margin: 0 auto; padding: 40px 24px; }
+
+header { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+
+h1, h2, p { margin: 0; }
+h1 { font-size: 30px; letter-spacing: -0.04em; }
+h2 { font-size: 18px; }
+.eyebrow { margin-bottom: 6px; color: #5d6b82; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+.connection-status { color: #5d6b82; font-size: 14px; }
+
+.dashboard { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(250px, 0.75fr); gap: 20px; }
+.floor-panel, .robot-panel { background: #fff; border: 1px solid #dce3ed; border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgb(23 32 51 / 0.05); }
+
+#factory-floor { display: block; width: 100%; aspect-ratio: 1; background: #f8fafc; border-radius: 10px; color: #d9e1eb; }
+.floor { fill: #f8fafc; stroke: #b8c4d3; stroke-width: 0.55; }
+.grid { opacity: 0.8; }
+.station rect { fill: #dce9ff; stroke: #477fca; stroke-width: 0.4; }
+.station.dock rect { fill: #d8f4e5; stroke: #248b5a; }
+.station text { fill: #34425a; font-size: 2.1px; font-weight: 600; }
+.robot-marker { fill: #f26b38; stroke: #fff; stroke-width: 0.9; }
+.robot-heading { stroke: #fff; stroke-width: 0.8; stroke-linecap: round; }
+.robot-label { fill: #25334b; font-size: 2.1px; font-weight: 600; }
+.map-caption { margin-top: 12px; color: #68768b; font-size: 13px; }
+
+.robot-panel { min-height: 240px; }
+.robot-list { display: grid; gap: 10px; margin-top: 16px; }
+.robot-card { padding: 12px; border-radius: 10px; background: #f5f7fa; }
+.robot-card__name { font-size: 14px; font-weight: 700; }
+.robot-card__details { display: grid; gap: 6px; margin-top: 8px; color: #5d6b82; font-size: 13px; }
+.robot-card__summary { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 3px; }
+.robot-card__row { margin: 0; }
+.robot-card__label { color: #7a8799; }
+.robot-card__value { color: #34425a; font-weight: 600; }
+.status { color: #248b5a; font-weight: 600; }
+.empty { color: #68768b; font-size: 14px; }
+
+@media (max-width: 760px) {
+  .page { padding: 24px 16px; }
+  header { align-items: start; flex-direction: column; }
+  .dashboard { grid-template-columns: 1fr; }
+}
