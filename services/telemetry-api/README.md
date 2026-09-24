@@ -1,35 +1,30 @@
 # Telemetry API
 
-Receives robot telemetry from MQTT, validates it, stores it in PostgreSQL, and
-provides an HTTP API for reading the latest robot state.
+The API subscribes to MQTT telemetry, validates each message, and writes it to
+PostgreSQL. Its HTTP endpoints and dashboard show the latest reading for each
+robot.
 
-```text
-device-sim -> Mosquitto -> telemetry-api -> PostgreSQL
-```
+## Run it
 
-## Run locally
-
-Run the complete system from the repository root:
+The API needs Mosquitto and PostgreSQL, so start the full stack from the
+repository root:
 
 ```bash
+bash scripts/setup-local-secrets.sh
 docker compose up --build
 ```
 
-Open the interactive API documentation at [http://localhost:8000/docs](http://localhost:8000/docs).
-The factory-floor dashboard is available at [http://localhost:8000](http://localhost:8000).
+Open the [dashboard](http://localhost:8000) or [API docs](http://localhost:8000/docs).
 
-## Endpoints
-
-| Endpoint | Purpose |
-| --- | --- |
-| `GET /health` | Check PostgreSQL connectivity. |
-| `GET /robots` | Get the latest telemetry for every robot. |
-| `GET /robots/{device_id}/latest` | Get the latest telemetry for one robot. |
+`GET /robots` shows robots seen in the last 30 seconds, with one latest reading
+per robot. `GET /robots/{device_id}/latest` still returns the latest stored
+reading for a specific robot, even if it is offline. `GET /health` checks
+database connectivity.
 
 ## Tests
 
-The unit tests use fake MQTT messages and mocked database sessions, so they do
-not need Docker Compose or external services.
+The unit tests use fake MQTT messages and database sessions; they do not need
+Docker Compose.
 
 ```bash
 cd services/telemetry-api

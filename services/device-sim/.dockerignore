@@ -23,6 +23,7 @@ Dockerfile
 # Virtual Environments & Tooling
 # ==============================================================================
 .venv/
+.venv.dataless-backup-*/
 venv/
 ENV/
 env/

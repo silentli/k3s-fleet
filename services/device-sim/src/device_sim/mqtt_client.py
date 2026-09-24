@@ -71,7 +71,7 @@ class ResilientMQTTClient:
         if self.is_connected:
             try:
                 self.client.publish(self.topic, payload_json, qos=1)
-                logger.info(f"Published telemetry: {payload_json}")
+                logger.debug("Published telemetry: %s", payload_json)
             except Exception as e:
                 logger.error(f"Publish failed: {e}")
                 self.message_buffer.append(payload_json)

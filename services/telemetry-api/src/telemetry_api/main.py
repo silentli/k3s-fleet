@@ -1,5 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -17,6 +18,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname
 settings = Settings()
 engine, SessionLocal = create_session_factory(settings.database_url)
 STATIC_DIR = Path(__file__).parent / "static"
+ROBOT_ONLINE_WINDOW = timedelta(seconds=30)
 
 
 @asynccontextmanager
@@ -74,8 +76,9 @@ def live():
 
 @app.get("/robots", response_model=list[RobotLatest])
 def list_robots():
+    received_since = datetime.now(timezone.utc) - ROBOT_ONLINE_WINDOW
     with SessionLocal() as session:
-        records = latest_robot_records(session)
+        records = latest_robot_records(session, received_since=received_since)
     return [as_latest(record) for record in records]
 
 

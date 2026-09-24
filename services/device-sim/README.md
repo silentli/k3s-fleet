@@ -1,87 +1,55 @@
-# Device Simulator (`device-sim`)
+# Device simulator
 
-An IoT Device Simulator that mimics an robot moving around a factory floor. The simulator tracks battery life, payload weight, heading, and distance, sending structured telemetry over MQTT.
+Simulates a robot moving between stations in `src/device_sim/layout.json`.
+It publishes position, battery, and other telemetry to Mosquitto over MQTT.
 
----
+The easiest way to run it is with the rest of the stack from the
+[repository root](../../README.md). The steps below are for running the
+simulator on its own.
 
-## Tech Stack
+## Run with uv
 
-- **[uv](https://github.com/astral-sh/uv)**: Dependency management (`uv.lock`) and virtual environment creation. It replaces `pip` and `venv`.
-- **[Ruff](https://docs.astral.sh/ruff/)**: An extremely fast Python linter and code formatter written in Rust.
-- **[Pydantic V2 & Pydantic Settings](https://docs.pydantic.dev/)**: Used for configuration and validation. It guarantees that environment variables and `layout.json` data are valid before the application logic starts.
-- **[Paho MQTT](https://pypi.org/project/paho-mqtt/)**: An MQTT client used to stream JSON telemetry payloads to the message broker.
-- **[Pytest](https://docs.pytest.org/)**: A testing framework.
-- **Docker**: Uses a `Dockerfile` with BuildKit cache mounts and a `.dockerignore` to reduce image size.
-
----
-
-## Getting Started
-
-### 1. Prerequisites
-Ensure [uv](https://github.com/astral-sh/uv) is installed.
-
-### 2. Local Setup
-From the simulator service directory, install the dependencies using `uv`:
+First, from the repository root, create the MQTT credentials and start the
+broker:
 
 ```bash
-cd services/device-sim
-
-# Sync dependencies and create a virtual environment (.venv)
-uv sync
-
-# Activate the virtual environment (macOS/Linux)
-source .venv/bin/activate
+bash scripts/setup-local-secrets.sh
+docker compose up -d mosquitto
 ```
 
-### 3. Configuration
-The simulator requires `src/device_sim/layout.json` to define factory stations
-(for example, Charging Docks and Assembly Lines).
-
-For local Docker runs, create a `.env` file in this `services/device-sim`
-directory from the supplied example:
+Then, from `services/device-sim`:
 
 ```bash
 cp .env.example .env
+uv sync
+PYTHONPATH=src uv run --env-file ../../k8s/base/secrets/device-sim-mqtt.env \
+  python -m device_sim.main
 ```
 
-Use it to override the default MQTT configuration:
+`.env` holds the local broker address, CA path, and simulator settings. The
+password stays in the generated `device-sim-mqtt.env` file; you do not need to
+copy it into `.env`.
 
-```ini
-MQTT_BROKER_HOST=localhost
-MQTT_BROKER_PORT=1883
-```
+## Run the Docker image separately
 
-### 4. Running the Simulator
-The simulator can be run directly via `uv`:
+With the Compose broker running, build the image and run it from
+`services/device-sim`:
 
 ```bash
-PYTHONPATH=src uv run python -m device_sim.main
-```
-
-### 5. Running Tests
-```bash
-uv run pytest tests
-```
-
-### 6. Linting & Formatting
-```bash
-# Check for linting errors
-uv run ruff check .
-
-# Format the code
-uv run ruff format .
-```
-
----
-
-## Docker
-
-From `services/device-sim`, build and run the simulator using Docker:
-
-```bash
-# Build the image
 docker build -t device-sim .
+docker run -it --rm \
+  --env-file ../../k8s/base/secrets/device-sim-mqtt.env \
+  --add-host=host.docker.internal:host-gateway \
+  -e MQTT_BROKER_HOST=host.docker.internal \
+  -e MQTT_BROKER_PORT=8883 \
+  -e MQTT_TLS_CA_FILE=/etc/mqtt/ca.crt \
+  -v "$PWD/../../k8s/base/secrets/mqtt-ca.crt:/etc/mqtt/ca.crt:ro" \
+  device-sim
+```
 
-# Run the container with the .env file created above
-docker run -it --rm --env-file .env device-sim
+## Checks
+
+```bash
+uv run pytest
+uv run ruff check .
 ```

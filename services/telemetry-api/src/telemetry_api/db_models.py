@@ -45,9 +45,9 @@ class TelemetryRecord(Base):
         )
 
 
-def latest_robot_records(session: Session) -> list[TelemetryRecord]:
-    """Return one newest telemetry record per robot without loading full history."""
-    ranked_records = (
+def latest_robot_records(session: Session, received_since: datetime | None = None) -> list[TelemetryRecord]:
+    """Return one newest record per robot, optionally limited to recent arrivals."""
+    ranked_query = (
         select(
             TelemetryRecord.id,
             func.row_number()
@@ -57,8 +57,10 @@ def latest_robot_records(session: Session) -> list[TelemetryRecord]:
             )
             .label("position"),
         )
-        .subquery()
     )
+    if received_since is not None:
+        ranked_query = ranked_query.where(TelemetryRecord.received_at >= received_since)
+    ranked_records = ranked_query.subquery()
 
     statement = (
         select(TelemetryRecord)
