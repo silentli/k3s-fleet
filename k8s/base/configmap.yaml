@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fleet-config
+data:
+  MQTT_BROKER_HOST: mosquitto
+  MQTT_BROKER_PORT: "8883"
+  MQTT_TOPIC: factory/telemetry
+  MQTT_TLS_CA_FILE: /etc/mqtt/ca.crt
+  POSTGRES_DB: fleet
+  POSTGRES_USER: fleet

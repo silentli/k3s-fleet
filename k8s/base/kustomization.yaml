@@ -1,0 +1,40 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: fleet
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - mosquitto.yaml
+  - postgres.yaml
+  - telemetry-api.yaml
+  - device-sim.yaml
+  - ingress.yaml
+
+configMapGenerator:
+  - name: mosquitto-config
+    files:
+      - mosquitto.conf
+  - name: mqtt-ca
+    files:
+      - ca.crt=secrets/mqtt-ca.crt
+
+secretGenerator:
+  - name: postgres-credentials
+    envs:
+      - secrets/postgres.env
+  - name: mosquitto-tls
+    type: kubernetes.io/tls
+    files:
+      - tls.crt=secrets/mqtt-server.crt
+      - tls.key=secrets/mqtt-server.key
+  - name: mosquitto-passwords
+    files:
+      - passwordfile=secrets/mqtt-passwordfile
+  - name: device-sim-mqtt-credentials
+    envs:
+      - secrets/device-sim-mqtt.env
+  - name: telemetry-api-mqtt-credentials
+    envs:
+      - secrets/telemetry-api-mqtt.env

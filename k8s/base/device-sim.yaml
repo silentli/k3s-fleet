@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: device-sim
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: device-sim
+  template:
+    metadata:
+      labels:
+        app: device-sim
+    spec:
+      containers:
+        - name: device-sim
+          image: device-sim:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: fleet-config
+            - secretRef:
+                name: device-sim-mqtt-credentials
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          volumeMounts:
+            - name: mqtt-ca
+              mountPath: /etc/mqtt
+              readOnly: true
+      volumes:
+        - name: mqtt-ca
+          configMap:
+            name: mqtt-ca

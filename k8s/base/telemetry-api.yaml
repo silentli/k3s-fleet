@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telemetry-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telemetry-api
+  template:
+    metadata:
+      labels:
+        app: telemetry-api
+    spec:
+      containers:
+        - name: telemetry-api
+          image: telemetry-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: fleet-config
+            - secretRef:
+                name: telemetry-api-mqtt-credentials
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DATABASE_URL
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: mqtt-ca
+              mountPath: /etc/mqtt
+              readOnly: true
+          startupProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            failureThreshold: 30
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 10
+      volumes:
+        - name: mqtt-ca
+          configMap:
+            name: mqtt-ca
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: telemetry-api
+spec:
+  selector:
+    app: telemetry-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

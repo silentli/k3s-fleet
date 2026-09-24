@@ -67,6 +67,11 @@ def health():
     return {"status": "ok"}
 
 
+@app.get("/health/live")
+def live():
+    return {"status": "ok"}
+
+
 @app.get("/robots", response_model=list[RobotLatest])
 def list_robots():
     with SessionLocal() as session:
