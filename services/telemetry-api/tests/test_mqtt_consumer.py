@@ -1,7 +1,23 @@
 from types import SimpleNamespace
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from telemetry_api.mqtt_consumer import TelemetryConsumer
+
+
+@patch("telemetry_api.mqtt_consumer.mqtt.Client")
+def test_consumer_configures_authentication_and_tls(mock_mqtt_class):
+    TelemetryConsumer(
+        "mosquitto",
+        8883,
+        "factory/telemetry",
+        MagicMock(),
+        username="telemetry-api",
+        password="test-password",
+        tls_ca_file="/etc/mqtt/ca.crt",
+    )
+
+    mock_mqtt_class.return_value.username_pw_set.assert_called_once_with("telemetry-api", "test-password")
+    mock_mqtt_class.return_value.tls_set.assert_called_once_with(ca_certs="/etc/mqtt/ca.crt")
 
 
 def test_consumer_validates_and_persists_an_mqtt_message(telemetry_message):

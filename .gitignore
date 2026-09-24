@@ -1,1 +1,10 @@
 .vscode/
+.env
+.venv
+.venv.dataless-backup-*
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+k8s/base/secrets/*
+!k8s/base/secrets/*.example
+/scripts/deploy-k3d.sh

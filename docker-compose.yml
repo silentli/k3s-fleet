@@ -2,9 +2,12 @@ services:
   mosquitto:
     image: eclipse-mosquitto:2.0.18
     ports:
-      - "1883:1883"
+      - "8883:8883"
     volumes:
-      - ./k8s/mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./k8s/base/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./k8s/base/secrets/mqtt-server.crt:/mosquitto/certs/tls.crt:ro
+      - ./k8s/base/secrets/mqtt-server.key:/mosquitto/certs/tls.key:ro
+      - ./k8s/base/secrets/mqtt-passwordfile:/mosquitto/auth/passwordfile:ro
       - mosquitto-data:/mosquitto/data
 
   postgres:
@@ -26,11 +29,16 @@ services:
   telemetry-api:
     build:
       context: ./services/telemetry-api
+    env_file:
+      - ./k8s/base/secrets/telemetry-api-mqtt.env
     environment:
       DATABASE_URL: postgresql+psycopg://fleet:fleet@postgres:5432/fleet
       MQTT_BROKER_HOST: mosquitto
-      MQTT_BROKER_PORT: 1883
+      MQTT_BROKER_PORT: 8883
       MQTT_TOPIC: factory/telemetry
+      MQTT_TLS_CA_FILE: /etc/mqtt/ca.crt
+    volumes:
+      - ./k8s/base/secrets/mqtt-ca.crt:/etc/mqtt/ca.crt:ro
     ports:
       - "8000:8000"
     depends_on:
@@ -42,10 +50,15 @@ services:
   device-sim:
     build:
       context: ./services/device-sim
+    env_file:
+      - ./k8s/base/secrets/device-sim-mqtt.env
     environment:
       MQTT_BROKER_HOST: mosquitto
-      MQTT_BROKER_PORT: 1883
+      MQTT_BROKER_PORT: 8883
       MQTT_TOPIC: factory/telemetry
+      MQTT_TLS_CA_FILE: /etc/mqtt/ca.crt
+    volumes:
+      - ./k8s/base/secrets/mqtt-ca.crt:/etc/mqtt/ca.crt:ro
     restart: unless-stopped
     depends_on:
       mosquitto:

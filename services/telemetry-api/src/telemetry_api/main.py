@@ -22,7 +22,15 @@ STATIC_DIR = Path(__file__).parent / "static"
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(engine)
-    consumer = TelemetryConsumer(settings.mqtt_broker_host, settings.mqtt_broker_port, settings.mqtt_topic, SessionLocal)
+    consumer = TelemetryConsumer(
+        settings.mqtt_broker_host,
+        settings.mqtt_broker_port,
+        settings.mqtt_topic,
+        SessionLocal,
+        username=settings.mqtt_username,
+        password=settings.mqtt_password,
+        tls_ca_file=settings.mqtt_tls_ca_file,
+    )
     consumer.start()
     app.state.consumer = consumer
     yield

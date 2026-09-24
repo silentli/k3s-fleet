@@ -19,6 +19,22 @@ def test_mqtt_client_initialization():
 
 
 @patch("device_sim.mqtt_client.mqtt.Client")
+def test_mqtt_client_configures_authentication_and_tls(mock_mqtt_class):
+    ResilientMQTTClient(
+        "test-client",
+        "mosquitto",
+        8883,
+        "test/topic",
+        username="robot-sim",
+        password="test-password",
+        tls_ca_file="/etc/mqtt/ca.crt",
+    )
+
+    mock_mqtt_class.return_value.username_pw_set.assert_called_once_with("robot-sim", "test-password")
+    mock_mqtt_class.return_value.tls_set.assert_called_once_with(ca_certs="/etc/mqtt/ca.crt")
+
+
+@patch("device_sim.mqtt_client.mqtt.Client")
 def test_mqtt_client_publish_when_offline(mock_mqtt_class):
     """Test that publish buffers messages when the client is offline."""
     client = ResilientMQTTClient("test-client", "localhost", 1883, "test/topic")

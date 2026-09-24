@@ -7,7 +7,17 @@ logger = logging.getLogger("device-sim.mqtt")
 
 
 class ResilientMQTTClient:
-    def __init__(self, client_id: str, host: str, port: int, topic: str, max_buffer_size: int = 500):
+    def __init__(
+        self,
+        client_id: str,
+        host: str,
+        port: int,
+        topic: str,
+        max_buffer_size: int = 500,
+        username: str | None = None,
+        password: str | None = None,
+        tls_ca_file: str | None = None,
+    ):
         self.client_id = client_id
         self.host = host
         self.port = port
@@ -17,6 +27,12 @@ class ResilientMQTTClient:
 
         # Initialize Paho MQTT client (compatible with v1.6.1)
         self.client = mqtt.Client(client_id=self.client_id)
+        if (username is None) != (password is None):
+            raise ValueError("MQTT username and password must be configured together")
+        if username is not None:
+            self.client.username_pw_set(username, password)
+        if tls_ca_file is not None:
+            self.client.tls_set(ca_certs=tls_ca_file)
         self.client.on_connect = self._on_connect
         self.client.on_disconnect = self._on_disconnect
 

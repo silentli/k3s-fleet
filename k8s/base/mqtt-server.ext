@@ -1,0 +1,4 @@
+basicConstraints = critical,CA:FALSE
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = DNS:mosquitto,DNS:mosquitto.fleet.svc,DNS:mosquitto.fleet.svc.cluster.local,DNS:localhost,DNS:host.docker.internal,IP:127.0.0.1

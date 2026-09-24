@@ -141,6 +141,9 @@ def main():
         host=settings.mqtt_broker_host,
         port=settings.mqtt_broker_port,
         topic=settings.mqtt_topic,
+        username=settings.mqtt_username,
+        password=settings.mqtt_password,
+        tls_ca_file=settings.mqtt_tls_ca_file,
     )
     mqtt_client.connect()
 

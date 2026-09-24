@@ -10,12 +10,27 @@ logger = logging.getLogger("fleet.mqtt")
 
 
 class TelemetryConsumer:
-    def __init__(self, host: str, port: int, topic: str, session_factory):
+    def __init__(
+        self,
+        host: str,
+        port: int,
+        topic: str,
+        session_factory,
+        username: str | None = None,
+        password: str | None = None,
+        tls_ca_file: str | None = None,
+    ):
         self.host = host
         self.port = port
         self.topic = topic
         self.session_factory = session_factory
         self.client = mqtt.Client(client_id="fleet-api-consumer")
+        if (username is None) != (password is None):
+            raise ValueError("MQTT username and password must be configured together")
+        if username is not None:
+            self.client.username_pw_set(username, password)
+        if tls_ca_file is not None:
+            self.client.tls_set(ca_certs=tls_ca_file)
         self.client.on_connect = self._on_connect
         self.client.on_message = self._on_message
 
