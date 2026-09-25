@@ -3,8 +3,14 @@ name: Telemetry API CI
 on:
   push:
     branches: [main]
+    paths:
+      - "services/telemetry-api/**"
+      - ".github/workflows/telemetry-api-ci.yml"
   pull_request:
     branches: [main]
+    paths:
+      - "services/telemetry-api/**"
+      - ".github/workflows/telemetry-api-ci.yml"
 
 jobs:
   test-and-build:

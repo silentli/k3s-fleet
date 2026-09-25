@@ -3,8 +3,14 @@ name: Device Sim CI
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - "services/device-sim/**"
+      - ".github/workflows/device-sim-lint-test.yml"
   pull_request:
     branches: [ "main" ]
+    paths:
+      - "services/device-sim/**"
+      - ".github/workflows/device-sim-lint-test.yml"
 
 jobs:
   test-and-lint:
