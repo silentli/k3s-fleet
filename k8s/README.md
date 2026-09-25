@@ -67,3 +67,6 @@ The generated files and Kubernetes Secrets are a simple setup for this demo,
 not a complete production secret-management plan. In particular, do not
 expose MQTT to external robots until its certificate covers their broker
 hostname and you have decided how those robots will reach the broker.
+
+The broker's `mosquitto.acl` lets `robot-sim` publish to `factory/telemetry`
+and `telemetry-api` subscribe to it. Neither account is a broker administrator.

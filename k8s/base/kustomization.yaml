@@ -16,6 +16,7 @@ configMapGenerator:
   - name: mosquitto-config
     files:
       - mosquitto.conf
+      - mosquitto.acl
   - name: mqtt-ca
     files:
       - ca.crt=secrets/mqtt-ca.crt

@@ -5,6 +5,7 @@ services:
       - "8883:8883"
     volumes:
       - ./k8s/base/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./k8s/base/mosquitto.acl:/mosquitto/config/mosquitto.acl:ro
       - ./k8s/base/secrets/mqtt-server.crt:/mosquitto/certs/tls.crt:ro
       - ./k8s/base/secrets/mqtt-server.key:/mosquitto/certs/tls.key:ro
       - ./k8s/base/secrets/mqtt-passwordfile:/mosquitto/auth/passwordfile:ro

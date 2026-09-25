@@ -1,0 +1,5 @@
+user robot-sim
+topic write factory/telemetry
+
+user telemetry-api
+topic read factory/telemetry
