@@ -54,16 +54,29 @@ that Deployment so the pods pick up the new image.
 To pause the cluster, run `k3d cluster stop k3s-fleet-cluster`. Start it again
 with `k3d cluster start k3s-fleet-cluster`.
 
-## A separate K3s machine
+## Use the published images
 
 After tests pass on `main`, CI publishes `ghcr.io/silentli/telemetry-api` and
-`ghcr.io/silentli/device-sim` with commit-SHA and `latest` tags. For a remote
-cluster, use the commit-SHA tags in `k8s/base/telemetry-api.yaml` and
-`k8s/base/device-sim.yaml`, and set the hostname in `k8s/base/ingress.yaml`
-to one that points to your cluster. Apply with `kubectl apply -k k8s/base`.
-New GHCR packages are private by default; make them public or configure image
-pull credentials before deploying. The local `localhost` Ingress and image
-tags will not work unchanged on a remote machine.
+`ghcr.io/silentli/device-sim` with full commit-SHA and `latest` tags. The
+`k8s/overlays/ghcr` overlay uses the SHA tags; the base keeps the locally built
+images for the k3d steps above.
+
+Before deploying a newer version, change the tag for each image in
+`k8s/overlays/ghcr/kustomization.yaml` to the SHA of its last successful
+publishing run. The SHAs can differ because CI only publishes a service when
+that service or its workflow changes. Then apply the overlay:
+
+```bash
+kubectl --context k3d-k3s-fleet-cluster apply -k k8s/overlays/ghcr
+kubectl --context k3d-k3s-fleet-cluster -n fleet rollout status deployment/device-sim
+kubectl --context k3d-k3s-fleet-cluster -n fleet rollout status deployment/telemetry-api
+```
+
+The images must be pullable by the cluster. If the GHCR packages are private,
+make them public or configure image pull credentials. On a separate K3s
+machine, also change the `localhost` hostname in `k8s/base/ingress.yaml` to
+one that points to your cluster and use its kubectl context instead of the
+k3d context above.
 
 The generated files and Kubernetes Secrets are a simple setup for this demo,
 not a complete production secret-management plan. In particular, do not

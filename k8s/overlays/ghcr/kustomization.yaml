@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+images:
+  - name: device-sim
+    newName: ghcr.io/silentli/device-sim
+    newTag: a447bc28bc8e1115b8f5121c6745e71963cf70b0
+  - name: telemetry-api
+    newName: ghcr.io/silentli/telemetry-api
+    newTag: a447bc28bc8e1115b8f5121c6745e71963cf70b0
