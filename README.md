@@ -14,7 +14,7 @@ device-sim -> Mosquitto -> telemetry-api -> PostgreSQL
 - Mosquitto with MQTT over TLS and password authentication; PostgreSQL for telemetry storage
 - HTML, CSS, JavaScript, and SVG for the live factory-floor dashboard
 - Docker Compose locally; K3s, Kustomize, and Traefik for cluster deployment
-- uv, pytest, Ruff, and GitHub Actions for the simulator's checks and image build
+- uv, pytest, Ruff, and GitHub Actions for tests and GHCR image publishing
 
 ## Run locally
 

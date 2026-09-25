@@ -56,12 +56,14 @@ with `k3d cluster start k3s-fleet-cluster`.
 
 ## A separate K3s machine
 
-Publish the two application images to a registry your cluster can reach and
-change their names in `k8s/base/telemetry-api.yaml` and
-`k8s/base/device-sim.yaml`. Set the hostname in `k8s/base/ingress.yaml` to
-one that points to your cluster, then apply with `kubectl apply -k k8s/base`.
-The local `localhost` Ingress and image tags will not work unchanged on a
-remote machine.
+After tests pass on `main`, CI publishes `ghcr.io/silentli/telemetry-api` and
+`ghcr.io/silentli/device-sim` with commit-SHA and `latest` tags. For a remote
+cluster, use the commit-SHA tags in `k8s/base/telemetry-api.yaml` and
+`k8s/base/device-sim.yaml`, and set the hostname in `k8s/base/ingress.yaml`
+to one that points to your cluster. Apply with `kubectl apply -k k8s/base`.
+New GHCR packages are private by default; make them public or configure image
+pull credentials before deploying. The local `localhost` Ingress and image
+tags will not work unchanged on a remote machine.
 
 The generated files and Kubernetes Secrets are a simple setup for this demo,
 not a complete production secret-management plan. In particular, do not
