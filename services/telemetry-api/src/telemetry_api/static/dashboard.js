@@ -35,11 +35,20 @@ function drawStations() {
     const group = svgElement("g", { class: `station${station.dock ? " dock" : ""}` });
     group.append(svgElement("rect", { x: x - 4, y: y - 4, width: 8, height: 8, rx: 1 }));
     const label = svgElement("text", {
-      x: station.dock ? 8 : x,
-      y: y > 90 ? y - 6 : y + 7,
-      "text-anchor": station.dock ? "start" : "middle",
+      x,
+      y: station.dock ? y - 8.5 : y > 90 ? y - 6 : y + 7,
+      "text-anchor": "middle",
     });
-    label.textContent = station.name;
+    if (station.dock) {
+      // Stack the words so the centered label fits beside the left boundary.
+      station.name.split(" ").forEach((word, index) => {
+        const line = svgElement("tspan", { x, dy: index === 0 ? 0 : 2.5 });
+        line.textContent = word;
+        label.append(line);
+      });
+    } else {
+      label.textContent = station.name;
+    }
     group.append(label);
     stationsLayer.append(group);
   });
