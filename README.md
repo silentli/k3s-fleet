@@ -4,6 +4,8 @@ A small robot-fleet demo. The simulator sends position and status updates over
 MQTT. The telemetry API stores them in PostgreSQL and shows the latest position
 of active robots on a factory-floor dashboard.
 
+![Factory-floor dashboard showing a robot's position, destination, and battery level](docs/images/dashboard.png)
+
 ```text
 device-sim -> Mosquitto -> telemetry-api -> PostgreSQL
 ```
