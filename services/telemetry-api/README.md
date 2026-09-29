@@ -1,10 +1,9 @@
 # Telemetry API
 
-The API subscribes to MQTT telemetry, validates each message, and writes it to
-PostgreSQL. Its HTTP endpoints and dashboard show the latest reading for each
-robot.
+Validates robot telemetry from MQTT, stores it in PostgreSQL, and shows the
+latest readings through the API and factory-floor dashboard.
 
-## Run it
+## Run
 
 The API needs Mosquitto and PostgreSQL, so start the full stack from the
 repository root:
@@ -16,15 +15,27 @@ docker compose up --build
 
 Open the [dashboard](http://localhost:8000) or [API docs](http://localhost:8000/docs).
 
-`GET /robots` shows robots seen in the last 30 seconds, with one latest reading
-per robot. `GET /robots/{device_id}/latest` still returns the latest stored
-reading for a specific robot, even if it is offline. `GET /health` checks
-database connectivity.
+- `GET /robots`: latest readings for robots seen in the last 30 seconds.
+- `GET /robots/{device_id}/latest`: last stored reading, even if the robot is offline.
+
+## Health checks
+
+| Endpoint | Checks |
+| --- | --- |
+| `/health` | Database and MQTT |
+| `/health/database` | PostgreSQL connection |
+| `/health/mqtt` | MQTT consumer connection |
+| `/health/live` | API process |
+
+Connection checks return 200 when healthy, otherwise 503. MQTT status checks
+the connection, not message delivery.
+
+Kubernetes uses `/health/database` for readiness and `/health/live` for startup
+and liveness. `/health` is an overall diagnostic check, not a Kubernetes probe.
 
 ## Tests
 
-The unit tests use fake MQTT messages and database sessions; they do not need
-Docker Compose.
+Tests use fake MQTT messages and database connections; Docker is not needed.
 
 ```bash
 cd services/telemetry-api

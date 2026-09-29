@@ -4,9 +4,10 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
 from .config import Settings
 from .database import Base, create_session_factory
@@ -64,9 +65,42 @@ def dashboard():
 
 @app.get("/health")
 def health():
-    with engine.connect() as connection:
-        connection.execute(text("SELECT 1"))
-    return {"status": "ok"}
+    return health_response({"database": database_connected(), "mqtt": mqtt_connected()})
+
+
+@app.get("/health/database")
+def database_health():
+    return health_response({"database": database_connected()})
+
+
+@app.get("/health/mqtt")
+def mqtt_health():
+    return health_response({"mqtt": mqtt_connected()})
+
+
+def database_connected() -> bool:
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+        return True
+    except SQLAlchemyError:
+        return False
+
+
+def mqtt_connected() -> bool:
+    consumer = getattr(app.state, "consumer", None)
+    return consumer is not None and consumer.is_connected()
+
+
+def health_response(checks: dict[str, bool]) -> JSONResponse:
+    healthy = all(checks.values())
+    return JSONResponse(
+        status_code=200 if healthy else 503,
+        content={
+            "status": "ok" if healthy else "degraded",
+            **{name: "connected" if connected else "disconnected" for name, connected in checks.items()},
+        },
+    )
 
 
 @app.get("/health/live")

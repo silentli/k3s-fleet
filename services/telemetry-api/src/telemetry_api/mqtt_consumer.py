@@ -55,6 +55,9 @@ class TelemetryConsumer:
         except Exception:
             logger.exception("Could not store telemetry for %s", payload.device_id)
 
+    def is_connected(self) -> bool:
+        return self.client.is_connected()
+
     def start(self):
         self.client.connect_async(self.host, self.port, keepalive=60)
         self.client.loop_start()
