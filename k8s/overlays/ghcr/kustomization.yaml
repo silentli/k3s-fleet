@@ -10,4 +10,4 @@ images:
     newTag: a447bc28bc8e1115b8f5121c6745e71963cf70b0
   - name: telemetry-api
     newName: ghcr.io/silentli/telemetry-api
-    newTag: a447bc28bc8e1115b8f5121c6745e71963cf70b0
+    newTag: b295284b4a51728130d42cb1312f81cfe07f4a34
