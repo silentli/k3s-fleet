@@ -40,3 +40,5 @@ Press Ctrl+C to stop the foreground Compose run.
 
 For a local K3s cluster, see the [K3s guide](k8s/README.md). The simulator and
 API also have their own READMEs under `services/`.
+
+Possible next steps are listed in the [improvement scope](docs/improvements.md).
