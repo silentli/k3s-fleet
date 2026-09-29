@@ -1,5 +1,12 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.ruff_cache/
 .venv/
 .venv.dataless-backup-*/
+.env
+.env.*
+.gitignore
+README.md
+tests/
+.DS_Store
