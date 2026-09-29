@@ -16,7 +16,14 @@ device-sim -> Mosquitto -> telemetry-api -> PostgreSQL
 - Mosquitto with MQTT over TLS and password authentication; PostgreSQL for telemetry storage
 - HTML, CSS, JavaScript, and SVG for the live factory-floor dashboard
 - Docker Compose locally; K3s, Kustomize, and Traefik for cluster deployment
-- uv, pytest, Ruff, and GitHub Actions for tests and GHCR image publishing
+- uv, pytest, Ruff, and GitHub Actions for tests, GHCR publishing, and image-update PRs
+
+## Image updates
+
+GitHub Actions tests each service and publishes its image to GHCR. After a
+successful publish on `main`, it opens or updates a PR with the new image SHA
+in Kustomize. Review and merge the PR, then deploy when ready. Deployment
+stays manual. See the [K3s guide](k8s/README.md#use-the-published-images).
 
 ## Run locally
 

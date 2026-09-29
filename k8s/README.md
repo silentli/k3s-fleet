@@ -61,12 +61,21 @@ After tests pass on `main`, CI publishes `ghcr.io/silentli/telemetry-api` and
 `k8s/overlays/ghcr` overlay uses the SHA tags; the base keeps the locally built
 images for the k3d steps above.
 
-Before deploying a newer version, change the tag for each image in
-`k8s/overlays/ghcr/kustomization.yaml` to the SHA of its last successful
-publishing run. The SHAs can differ because CI only publishes a service when
-that service or its workflow changes. Then apply the overlay:
+After publishing, Actions opens or updates one PR per service with its new
+SHA in `k8s/overlays/ghcr/kustomization.yaml`. Older builds are skipped when
+newer service changes exist on `main`. Image-only PRs do not rebuild the apps.
+
+Enable this once in GitHub: **Settings → Actions → General → Workflow
+permissions → Allow GitHub Actions to create and approve pull requests**.
+The job uses `GITHUB_TOKEN` with `contents: write` and `pull-requests: write`.
+It does not approve or merge PRs, and needs no personal access token.
+See [GitHub's settings guide](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository).
+
+Review and merge the PR, then pull `main` and deploy. Merging alone does not
+change the cluster:
 
 ```bash
+git pull --ff-only
 kubectl --context k3d-k3s-fleet-cluster apply -k k8s/overlays/ghcr
 kubectl --context k3d-k3s-fleet-cluster -n fleet rollout status deployment/device-sim
 kubectl --context k3d-k3s-fleet-cluster -n fleet rollout status deployment/telemetry-api

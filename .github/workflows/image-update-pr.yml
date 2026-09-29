@@ -1,0 +1,83 @@
+name: Propose image update
+
+on:
+  workflow_call:
+    inputs:
+      service:
+        description: Service whose image was successfully published
+        required: true
+        type: string
+
+jobs:
+  propose:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    concurrency:
+      group: image-update-${{ inputs.service }}
+      cancel-in-progress: false
+    env:
+      SERVICE: ${{ inputs.service }}
+      IMAGE_SHA: ${{ github.sha }}
+
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Update the published image tag
+        id: update
+        shell: bash
+        run: |
+          case "$SERVICE" in
+            device-sim) ci_workflow=.github/workflows/device-sim-lint-test.yml ;;
+            telemetry-api) ci_workflow=.github/workflows/telemetry-api-ci.yml ;;
+            *) echo "Unsupported service: $SERVICE" >&2; exit 1 ;;
+          esac
+          if [[ ! "$IMAGE_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Expected a full commit SHA." >&2
+            exit 1
+          fi
+
+          # An older build must not replace a newer service update.
+          latest_change=$(git log -1 --format=%H HEAD -- \
+            "services/$SERVICE" "$ci_workflow" .github/workflows/image-update-pr.yml)
+          if [[ "$IMAGE_SHA" != "$latest_change" ]]; then
+            echo "Skipping an outdated build for $SERVICE."
+            exit 0
+          fi
+
+          overlay=k8s/overlays/ghcr/kustomization.yaml
+          sed -i "/^  - name: $SERVICE$/,/^    newTag:/ s/^    newTag:.*/    newTag: $IMAGE_SHA/" "$overlay"
+          updated_tag=$(sed -n "/^  - name: $SERVICE$/,/^    newTag:/ s/^    newTag: //p" "$overlay")
+          if [[ "$updated_tag" != "$IMAGE_SHA" ]]; then
+            echo "Could not update the image tag for $SERVICE." >&2
+            exit 1
+          fi
+          git diff --check
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
+      - name: Open or update the image PR
+        if: steps.update.outputs.ready == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
+        with:
+          branch: codex/image-${{ inputs.service }}
+          base: main
+          add-paths: k8s/overlays/ghcr/kustomization.yaml
+          commit-message: "chore(k8s): update ${{ inputs.service }} image"
+          title: "chore(k8s): update ${{ inputs.service }} image"
+          body: |
+            Pin `${{ inputs.service }}` to the image published from
+            [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}).
+
+            [Tests and image publishing](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) succeeded before this update.
+            Only this service's image tag changes; the other service keeps its current tag.
+
+            Review and merge this PR, then pull `main` and deploy using the
+            [K3s guide](${{ github.server_url }}/${{ github.repository }}/blob/main/k8s/README.md#use-the-published-images).
+            Merging does not deploy to the cluster.
