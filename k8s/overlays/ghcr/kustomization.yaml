@@ -7,7 +7,7 @@ resources:
 images:
   - name: device-sim
     newName: ghcr.io/silentli/device-sim
-    newTag: b295284b4a51728130d42cb1312f81cfe07f4a34
+    newTag: efe88a7cb46dd08dca7b461905c85991640b39d7
   - name: telemetry-api
     newName: ghcr.io/silentli/telemetry-api
     newTag: b295284b4a51728130d42cb1312f81cfe07f4a34
